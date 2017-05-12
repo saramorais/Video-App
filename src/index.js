@@ -12,22 +12,35 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { videos: [] };
+    this.state = {
+      videos: [],
+      selectedVideo: null
+    };
 
-    YTSearch({key: API_KEY, term: "Bakstreet Boys"}, (videos) => {
-      this.setState({ videos });
-    });
+    this.videoSearch("Spice Girls");
+
   }
+
+  videoSearch(term) {
+    YTSearch({key: API_KEY, term: term}, (videos) => {
+      this.setState({
+        videos: videos,
+        selectedVideo: videos[0]
+      });
+    });
+  };
 
   render() {
     return (
       <div>
-        <SearchBar />
-        <VideoDetail video={this.state.videos[0]}/>
-        <VideoList videos={this.state.videos} />
+        <SearchBar onSearchTermChange={term => this.videoSearch(term)} />
+        <VideoDetail video={this.state.selectedVideo}/>
+        <VideoList
+          onVideoSelect={selectedVideo => this.setState({selectedVideo})}
+          videos={this.state.videos} />
       </div>
     );
   }
 }
 
-ReactDOM.render(<App />, document.querySelector(".container"));
+ReactDOM.render(<App />, document.querySelector(".container-fluid"));
